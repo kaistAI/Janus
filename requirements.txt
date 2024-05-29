@@ -2,4 +2,5 @@ aiolimiter
 openai
 tqdm
 transformers
+datasets
 vllm
