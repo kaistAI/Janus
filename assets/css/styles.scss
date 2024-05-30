@@ -52,7 +52,7 @@ p {
   font-size: 16px;
   margin-bottom: 20px;
   color: #555;
-  font-weight: 400;
+  font-weight: 350;
   & > b {
     font-weight: 500;
   }
@@ -62,11 +62,11 @@ li {
   font-size: 16px; /* Adjust font size */
   color: #555; /* Adjust text color */
   margin-bottom: 10px; /* Adjust margin between list items */
-  font-weight: 400;
+  font-weight: 350;
   & > b {
     font-weight: 500;
   }
-  line-height: 1.25; /* Adjust line height for better readability */
+  line-height: 1.5; /* Adjust line height for better readability */
 }
 
 ul {
@@ -75,6 +75,16 @@ ul {
 
 ol {
   padding-left: 20px; /* Adjust padding for ordered lists */
+}
+
+li + h1,
+li + h2,
+li + h3,
+li + h4,
+li + h5,
+li + h6 {
+  margin-left: 0; /* Remove left margin */
+  padding-left: 0; /* Remove left padding */
 }
 
 .video-wrapper {

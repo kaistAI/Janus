@@ -89,7 +89,7 @@ If you find our work useful in your work, please consider citing our paper:
 {: .logos}
 [![Logo of KAIST](/assets/img/kaist_logo.png)](https://kaist.ac.kr)
 [![Logo of LKLab](/assets/img/lklab_logo.jpg)](https://lklab.kaist.ac.kr/)
-[![Logo of CMU](/assets/cmu-wordmark-stacked-r.png)](https://www.cmu.edu/)
+[![Logo of CMU](/assets/img/cmu-wordmark-stacked-r.png)](https://www.cmu.edu/)
 
 <!-- {: .center .acknowledgement}
 This research was supported by the **KAIST-NAVER Hypercreative AI Center**. -->
