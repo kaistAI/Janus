@@ -116,7 +116,7 @@ export OPENAI_API_KEY=<YOUR_API_KEY>
 
 </details>
 
-### Script examples
+### Scripts
 
 We provide simple single-file inference code in [examples/](./examples) and scripts for running inference on all instances on Multifaceted Bench via [Makefile](./Makefile).
 
@@ -307,4 +307,17 @@ We train the reward model in two stages, firstly using a subset of Multifaceted 
 2. Continually train on Helpfulness data (66k).
 ```bash
 ./train/openrlhf/scripts/train_rm_helpful.sh
+```
+
+## Citation
+If you find our work helpful for your work, please consider citing our paper.
+```bibtex
+@misc{lee2024aligning,
+      title={Aligning to Thousands of Preferences via System Message Generalization}, 
+      author={Seongyun Lee and Sue Hyun Park and Seungone Kim and Minjoon Seo},
+      year={2024},
+      eprint={2405.17977},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
 ```
