@@ -8,7 +8,7 @@ html {
 }
 
 body {
-  font-family: 'Noto Sans', sans-serif;
+  font-family: 'Lato', sans-serif;
 }
 
 .wrapper {
@@ -49,13 +49,32 @@ h3 {
 }
 
 p {
-  font-size: 18px;
+  font-size: 14px;
   margin-bottom: 20px;
   color: #555;
-  font-weight: 300;
+  font-weight: 350;
   & > b {
     font-weight: 500;
   }
+}
+
+li {
+  font-size: 14px; /* Adjust font size */
+  color: #555; /* Adjust text color */
+  margin-bottom: 10px; /* Adjust margin between list items */
+  font-weight: 350;
+  & > b {
+    font-weight: 500;
+  }
+  line-height: 1.5; /* Adjust line height for better readability */
+}
+
+ul {
+  padding-left: 20px; /* Adjust padding for unordered lists */
+}
+
+ol {
+  padding-left: 20px; /* Adjust padding for ordered lists */
 }
 
 .video-wrapper {
