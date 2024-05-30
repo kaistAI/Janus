@@ -28,8 +28,7 @@ paper: https://arxiv.org/abs/2405.17977
 code: https://github.com/kaistAI/Janus
 hf_train_data: https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-SFT
 hf_test_data: https://huggingface.co/datasets/kaist-ai/Multifaceted-Bench
-hf_model_7b: https://huggingface.co/kaist-ai/prometheus-vision-7b-v1.0
-hf_model_13b: https://huggingface.co/kaist-ai/prometheus-vision-13b-v1.0
+hf_model_7b: https://huggingface.co/kaist-ai/janus-7b
 
 plugins:
   - jekyll-feed

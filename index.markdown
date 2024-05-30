@@ -19,7 +19,7 @@ We propose the following:
 
 ## Training on various system messages for alignment
 {: .sys-img}
-![janus_overview](/assets/img/janus_overview.svg)  
+![janus_overview](/assets/img/janus_overview.png)  
 
 Previous LLMs are trained with homogeneous system messages reflecting general helpfulness and harmlessness. We propose training LLMs with diverse system messages, each representing an individual’s multifaceted preferences, to generalize to unseen system messages. The model we train in this direction, <span class="sys-name">Janus</span> 7B, is adept at generating personalized responses for personalized system messages.
 
@@ -35,11 +35,11 @@ A preference is implicit in typical preference datasets, which provide only a pa
 
 ### Multifaceted preference dataset: 
 {: .sys-img}
-![data_construction](/assets/img/data_construction.svg)  
+![data_construction](/assets/img/data_construction.png)  
 
 The <span class="sys-name">Multifaceted-Collection</span> is a dataset for aligning LLMs to diverse human preferences, built by a novel construction approach to make preferences multifaceted and explicit. We acquire 65k instructions from five existing datasets ([Nectar](https://huggingface.co/datasets/berkeley-nest/Nectar), [OpenHermesPreferences](https://huggingface.co/datasets/argilla/OpenHermesPreferences), [UltraFeedback-binarized-clean](https://huggingface.co/datasets/allenai/ultrafeedback_binarized_cleaned), [Chatbot Arena Conversations](https://huggingface.co/datasets/lmsys/chatbot_arena_conversations), [Domain-Specific Preference dataset (DSP)](https://github.com/Linear95/DSP/blob/main/data)). For each instruction, preference descriptions are augmented from general to specific, allowing for multiple facets to branch out. Then we combine preferences from various dimensions into a system message to materialize these preferences as model input. Following the system message and instruction, a gold response is generated. We use GPT-4-Turbo for preference augmentation, system message generation, and gold response generation.
 
-Here is an interative visualization of the dimensions, top-5 subdimensions in each dimension, and keywords of 5 randomly sampled preference descriptions in each subdimension.
+Here is an interative visualization of the dimensions, top-5 subdimensions in each dimension, and keywords of 5 randomly sampled preference descriptions in each subdimension. Click on the elements to see how much diverse preferences can exist!
 
 {% include_relative assets/img/preference_sunburst.html %}
 
