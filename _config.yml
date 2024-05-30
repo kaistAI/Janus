@@ -23,7 +23,7 @@ theme: minima
 description:
 
 syscolor: "#555555"
-sysfont: Inter
+sysfont: Lato
 paper: https://arxiv.org/abs/2405.17977
 code: https://github.com/kaistAI/Janus
 hf_train_data: https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-SFT
