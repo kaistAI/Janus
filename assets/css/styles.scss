@@ -49,24 +49,24 @@ h3 {
 }
 
 p {
-  font-size: 14px;
+  font-size: 16px;
   margin-bottom: 20px;
   color: #555;
-  font-weight: 350;
+  font-weight: 400;
   & > b {
     font-weight: 500;
   }
 }
 
 li {
-  font-size: 14px; /* Adjust font size */
+  font-size: 16px; /* Adjust font size */
   color: #555; /* Adjust text color */
   margin-bottom: 10px; /* Adjust margin between list items */
-  font-weight: 350;
+  font-weight: 400;
   & > b {
     font-weight: 500;
   }
-  line-height: 1.5; /* Adjust line height for better readability */
+  line-height: 1.25; /* Adjust line height for better readability */
 }
 
 ul {

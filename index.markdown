@@ -36,7 +36,7 @@ A preference is implicit in typical preference datasets, which provide only a pa
 
 The <span class="sys-name">Multifaceted-Collection</span> is a dataset for aligning LLMs to diverse human preferences, built by a novel construction approach to make preferences multifaceted and explicit. We acquire 65k instructions from five existing datasets ([Nectar](https://huggingface.co/datasets/berkeley-nest/Nectar), [OpenHermesPreferences](https://huggingface.co/datasets/argilla/OpenHermesPreferences), [UltraFeedback-binarized-clean](https://huggingface.co/datasets/allenai/ultrafeedback_binarized_cleaned), [Chatbot Arena Conversations](https://huggingface.co/datasets/lmsys/chatbot_arena_conversations), [Domain-Specific Preference dataset (DSP)](https://github.com/Linear95/DSP/blob/main/data)). For each instruction, preference descriptions are augmented from general to specific, allowing for multiple facets to branch out. Then we combine preferences from various dimensions into a system message to materialize these preferences as model input. Following the system message and instruction, a gold response is generated. We use GPT-4-Turbo for preference augmentation, system message generation, and gold response generation.
 
-Here is an interative visualization of the dimensions, top-5 subdimensions in each dimension, and keywords of 5 randomly sampled preference descriptions in each subdimension. Click on the elements to see how diverse preferences can be!
+Here is an interative visualization of the dimensions, top-5 subdimensions in each dimension, and keywords of 5 randomly sampled preference descriptions in each subdimension. Click the elements to see how diverse preferences can be!
 
 {% include_relative assets/img/preference_sunburst.html %}
 
