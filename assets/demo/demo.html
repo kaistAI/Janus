@@ -2,6 +2,37 @@
 <head><meta charset="utf-8" /></head>
 <body>
     <div>
+        <div class="container mt-5">
+            <!-- <h2 class="text-center mb-5">Who's GPT-4's favorite? Battles between State-of-the-Art Chatbots</h2> -->
+            <!-- Selection -->
+            <div class="form-row" style="justify-content: flex-end;">
+              <div class="form-group col-md-1">
+                <div class="col-md-2" style="width: 100%"><label>&nbsp;</label></div>
+                <div class="btn-group" role="group" aria-label="Left and Right Controller"
+                  style="width: 100%;align-items: flex-end;justify-content: center;flex-direction: row;display: flex;">
+                  <button type="button" class="form-control btn btn-primary" id="prev-question"><i
+                      class="material-icons">keyboard_arrow_left</i></button>
+                  <button type="button" class="form-control btn btn-primary" id="next-question"><i
+                      class="material-icons">keyboard_arrow_right</i></button>
+        
+                </div>
+              </div>
+            </div>
+        
+            <!-- Question Card -->
+            <div style="display: flex; justify-content: center; align-items: center;">
+              <div class="card mb-4" style="width: 100%; display: flex; align-items: center;">
+                <!-- <p><b>Description:</b> Monalisa is a famous painting by Leonardo da Vinci. </p> -->
+        
+                <div class="card-body" id="selected-question" style="display: flex; height: 80vh;">
+                  <div class="chat-history">
+                    <!-- Add your chat messages here -->
+                  </div>
+        
+                </div>
+              </div>
+            </div>
+            </div>
         <script>
             // Handle message showing
             function createChatRow(sender, text, imageSrc) {
