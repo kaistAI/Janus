@@ -8,7 +8,7 @@ Janus is a 7B large language model (LLM) designed to align better with individua
 
 - Paper: [arXiv](https://arxiv.org/abs/2405.17977)
 - Janus models: [Janus-7B](https://huggingface.co/kaist-ai/janus-7b), [Janus-DPO-7B](https://huggingface.co/kaist-ai/janus-dpo-7b), [Janus-ORPO-7B](https://huggingface.co/kaist-ai/janus-orpo-7b), [Janus-RM](https://huggingface.co/kaist-ai/janus-rm-7b)
-- Train dataset splits: [Multifaceted-Collection-SFT](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-DPO), [Multifaceted-Collection-DPO](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-DPO), [Multifaceted-Collection-ORPO](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-ORPO), [Multifaceted-Collection-RM](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-RM),
+- Train dataset splits: [Multifaceted-Collection-SFT](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-SFT), [Multifaceted-Collection-DPO](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-DPO), [Multifaceted-Collection-ORPO](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-ORPO), [Multifaceted-Collection-RM](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-RM),
 - Test dataset: [Multifaceted-Bench](https://huggingface.co/datasets/kaist-ai/Multifaceted-Bench)
 
 See [our HuggingFace collection](https://huggingface.co/collections/kaist-ai/system-message-preference-alignment-6657b608280c926a3d0ec09c) to easily browse all resources.
@@ -22,8 +22,8 @@ See [our HuggingFace collection](https://huggingface.co/collections/kaist-ai/sys
 This repository mainly has three sections:
 
 - [Inference and evaluation](#inference-and-evaluation) of Janus models on Multifaceted Bench
-- [Training main Janus models](#train-janus-suite) using [axolotl](https://github.com/OpenAccess-AI-Collective/axolotl)
-- [Training Janus-RM-7B](#train-reward-model-on-multifaceted-collection) using [OpenRLHF](https://github.com/OpenLLMAI/OpenRLHF)
+- [Training main Janus models](#train-main-models) using [axolotl](https://github.com/OpenAccess-AI-Collective/axolotl)
+- [Training Janus-RM-7B](#train-reward-model) using [OpenRLHF](https://github.com/OpenLLMAI/OpenRLHF)
 
 As we use different codebases for the three sections, we provide separate installation guidelines under the respective section. 
 
@@ -116,9 +116,51 @@ export OPENAI_API_KEY=<YOUR_API_KEY>
 
 </details>
 
-### Inference and evaluation script
+### Script examples
 
-To run inference on models: 
+We provide simple single-file inference code in [examples/](./examples) and scripts for running inference on all instances on Multifaceted Bench via [Makefile](./Makefile).
+
+Here is a simple example inference code ([examples/inference_example.py](./examples/inference_example.py)).
+```python
+from transformers import AutoTokenizer, AutoModelForCausalLM
+import torch
+
+model_name = "kaist-ai/janus-7b"
+device = "cuda:0"
+
+# Load the model and tokenizer
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+dtype = "float16"
+if torch.cuda.is_bf16_supported():
+    dtype = "bfloat16"
+    
+model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=getattr(torch, dtype))
+model.eval()
+model.to(device)
+
+# Prepare inputs
+system = "As a financial news headline writer with a flair for the dramatic, you have taken on the role of crafting compelling headlines about the integration of AI into the financial sector. Your expertise allows you to weave industry-specific terminology seamlessly into each headline, striking a balance between capturing attention and providing meaningful insights into the transformative benefits of AI in finance. With each headline, you focus on elucidating the key advantages AI brings to financial operations, making complex information accessible and immediately impactful. While your headlines are designed to engage and inform an audience of finance and technology professionals, you navigate the fine line of excitement and accuracy with care, ensuring that the promises made are grounded in reality, thus avoiding any form of sensationalism. Your mission is to distill the essence of AI's impact on finance into a single, powerful line that speaks volumes to the informed reader."
+prompt = "Write a headline for an article about the benefits of using AI in the finance sector."
+
+def apply_template_mistral_instruct(system_message, content):
+    prompt = f"{system_message}\n{content}".strip()
+    return f"[INST] {prompt} [/INST] "
+
+input_str = apply_template_mistral_instruct(system, prompt)
+input_ids = tokenizer.encode(input_str, return_tensors="pt")
+print(input_str)
+
+model_inputs = input_ids.to(device)
+
+# Generate text
+output_ids = model.generate(model_inputs, max_new_tokens=1024)
+decoded = tokenizer.batch_decode(output_ids, skip_special_tokens=True)
+print(decoded[0][len(input_str):])
+# Revolutionary Trends: How AI Is Redefining Efficiency and Accuracy in the Financial Realm
+```
+
+To run inference on all instances of Multifaceted Bench: 
 ```bash
 CUDA_VISIBLE_DEVICES=$(CUDA_VISIBLE_DEVICES) python run_inference.py \
 --model_name kaist-ai/janus-7b \
@@ -158,7 +200,7 @@ python run_inference_openai.py \
 > Note that you must specify `--system_key` and `--user_key` arguments in order to properly create the model input.
 
 
-We use the LLM-as-a-Judge approach to evaluate model responses on Multifaceted Bench. In the paper, we used `gpt-4-0125-preview` (GPT-4 Turbo) as the evaluator model and averaged scores of 3 runs.
+We use a LLM-as-a-Judge approach to evaluate model responses on Multifaceted Bench. In the paper, we used `gpt-4-0125-preview` (GPT-4 Turbo) as the evaluator model and averaged scores of 3 runs.
 
 ```bash
 python run_eval_openai.py \
@@ -171,7 +213,7 @@ python run_eval_openai.py \
 --rubric_key rubric
 ```
 
-We also provide the basic commands above in a [Makefile](./Makefile) to ease the execution process. For example, to run inference on Janus 7B, you can simply execute:
+Again, we note that we provide the basic commands above in a [Makefile](./Makefile) to ease the execution process. For example, to run inference on Janus 7B, you can simply execute:
 ```bash
 make run_inference_janus
 ```
@@ -179,23 +221,7 @@ make run_inference_janus
 <!-- Note: must not use system_key -->
 
 
-## Train Janus suite
-
-
-### Format of train data (Multifaceted Collection)
-```json
-{
-  "system": "...",
-  "instruction": "...",
-  "output": "..."
-}
-```
-
-<details>
-<summary>Example Multifaceted Collection instance</summary>
-
-```json
-```
+## Train main models
 
 ### Setup
 We use the [axolotl](https://github.com/OpenAccess-AI-Collective/axolotl) framework to train Janus models. 
@@ -213,6 +239,9 @@ conda install pytorch pytorch-cuda=12.1 -c pytorch -c nvidia
 pip3 install packaging
 pip3 install -e '.[flash-attn,deepspeed]'
 ```
+
+### Input format
+Input format differs by the training method. Please refer to the dataset cards for more information: [Multifaceted-Collection-SFT](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-SFT), [Multifaceted-Collection-DPO](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-DPO), [Multifaceted-Collection-ORPO](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-ORPO)
 
 ### Train using axolotl
 We store training configuration YAML files for SFT, DPO, and ORPO under [train/axolotl/config](train/axolotl/config).
@@ -245,7 +274,7 @@ To train Janus 7B (1 epoch) as a pretrained model for reward modeling:
 accelerate launch -m axolotl.cli.train <PARENT_DIR>/janus-7b-192k-epoch1.yaml
 ```
 
-## Train reward model on Multifaceted Collection
+## Train reward model
 ### Setup
 We use the [OpenRLHF](https://github.com/OpenLLMAI/OpenRLHF) framework to train the reward model.
 Please refer to the installation guide in the original repository.
@@ -268,7 +297,7 @@ Replace `examples/train_rm.py` (under the OpenRLHF repo) with `train/openrlhf/tr
 
 
 ### Train using OpenRLHF
-We train the reward model in two stages. The scripts are located under [train/openrlhf/scripts](train/openrlhf/scripts).
+We train the reward model in two stages, firstly using a subset of Multifaceted Collection and secondly using a mix of general helpfulness data. The scripts are located under [train/openrlhf/scripts](train/openrlhf/scripts).
 
 1. Train on Multifaceted Collection (65k).
 ```bash

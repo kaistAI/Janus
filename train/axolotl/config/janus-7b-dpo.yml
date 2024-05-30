@@ -8,7 +8,7 @@ strict: false
 
 rl: dpo
 datasets:
-  - path: data/train/multifaceted_collection_dpo.jsonl
+  - path: kaist-ai/Multifaceted-Collection-DPO
     type:
       field_prompt: instruction
       field_system: system

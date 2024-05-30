@@ -7,7 +7,7 @@ load_in_4bit: false
 strict: false
 
 datasets:
-  - path: data/train/multifaceted_collection_sft_192k.jsonl
+  - path: kaist-ai/Multifaceted-Collection-SFT
     type:
       system_prompt: ""
       system_format: "[INST] {system}\n"

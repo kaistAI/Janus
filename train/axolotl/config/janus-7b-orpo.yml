@@ -11,7 +11,7 @@ orpo_alpha: 0.1
 remove_unused_columns: false
 chat_template: chatml
 datasets:
-  - path: data/train/multifaceted_collection_orpo.jsonl
+  - path: kaist-ai/Multifaceted-Collection-ORPO
     type: orpo.chat_template
       
 dataset_prepared_path:
