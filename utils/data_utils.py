@@ -7,6 +7,7 @@ import torch
 import torch.distributed as dist
 import torch.nn.functional as F
 from tqdm import tqdm
+from datasets import load_dataset
 
 log_root = "./"
 
@@ -44,6 +45,11 @@ def get_load_func(file):
             reader = csv.DictReader(f)
             for line in reader:
                 yield line
+                
+    def load_hf_dataset(file_path, split="train"):
+        dataset = load_dataset(file_path, split=split)
+        for d in dataset:
+            yield d
 
     if file.endswith(".json"):
         load_func = load_json

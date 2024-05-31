@@ -16,7 +16,7 @@ from utils.prompts import SAMPLING_PARAMS
 
 random.seed(42)
 
-DEBUG = False
+DEBUG = True
 
 os.environ["CURL_CA_BUNDLE"] = ""
 
@@ -199,7 +199,7 @@ def prepare_inputs(records, system_key, user_key, model_name: str, tokenizer):
 
         input_str = (
             apply_template_mistral_instruct(system_message, user_message)
-            if "mistral" in model_name.lower()
+            if "mistral" in model_name.lower() or "janus" in model_name.lower()
             else apply_template_chat(system_message, user_message, tokenizer)
         )
         inputs.append(input_str)
@@ -298,8 +298,8 @@ if __name__ == "__main__":
     parser.add_argument("--suffix", type=str, default="")
     parser.add_argument("--input_file", type=str, required=True)
     parser.add_argument("--output_dir", type=str, required=True, default="responses/")
-    parser.add_argument("--system_key", type=str, default=None)
-    parser.add_argument("--user_key", type=str, required=True)
+    parser.add_argument("--system_key", type=str, default="system")
+    parser.add_argument("--user_key", type=str, default="prompt")
     parser.add_argument("--num_gpus", type=int, default=2)
     parser.add_argument("--force_rerun", action="store_true")
 

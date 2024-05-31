@@ -290,7 +290,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output_dir", type=str, required=True, default=os.path.dirname(__file__)
     )
-    parser.add_argument("--user_key", type=str, required=True, default="instruction")
+    parser.add_argument("--user_key", type=str, required=True, default="prompt")
     parser.add_argument("--answer_key", type=str, required=True, default="reference_answer")
     parser.add_argument("--rubric_key", type=str, default="rubric")
     parser.add_argument("--system_key", type=str, default=None)
