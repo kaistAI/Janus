@@ -71,8 +71,11 @@ When evaluated on [RealToxicityPrompts](https://github.com/allenai/real-toxicity
 
 ------
 
-## Demo
-{% include_relative assets/demo/demo.html %}
+## Examples
+![example_1](assets/img/example_1.png)
+![example_2](assets/img/example_2.png)
+
+
 
 ## Bibtex
 If you find our work useful in your work, please consider citing our paper:
