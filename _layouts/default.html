@@ -34,16 +34,7 @@
         <div class="authors-wrapper">
         {% for author in site.data.authors %}
           <div class="author-container">
-            <div class="author-image">
-              {% if author.website %}
-                <a href="{{author.website}}">
-                  <img src="/Janus/assets/img/{{author.img}}"/>
-                </a>
-              {% else %}
-                <img src="/Janus/assets/img/{{author.img}}"/>
-              {% endif %}
-            </div>
-            <p style="font-family: '{{site.sysfont}}'">
+            <p style="font-family: '{{site.sysfont}}'; font-size: 17px; font-weight: bold;">
             {% if author.website %}
               <a href="{{author.website}}">
                 {{author.name}}
@@ -52,11 +43,14 @@
               {{author.name}}
             {% endif %}
             </p>
-            <p style="font-family: '{{site.sysfont}}'">
+            <p style="font-family: '{{site.sysfont}}'; font-size: 17px">
               {{author.affiliation}}
             </p>
           </div>
         {% endfor %}
+        <p style="font-family: '{{site.sysfont}}'; margin-bottom: 0%">
+          * denotes equal contribution
+        </p>
         </div>
       </div>
       <div class="button-container">
@@ -70,29 +64,17 @@
             <span style="font-family: '{{site.sysfont}}'">Code</span>
           </a>
         {% endif %}
+        <a class="button" href="{{site.hf_models_datasets}}" target="_blank">
+          <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg> -->
+          <img src="https://huggingface.co/datasets/huggingface/brand-assets/resolve/main/hf-logo.png" alt="Submit" width="25em">        
+          <span style="font-family: '{{site.sysfont}}'">Datasets & Models</span>
+        </a>
         {% if site.demo %}
         <a class="button-disabled">
           <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M352 0c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9L370.7 96 201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L416 141.3l41.4 41.4c9.2 9.2 22.9 11.9 34.9 6.9s19.8-16.6 19.8-29.6V32c0-17.7-14.3-32-32-32H352zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z"/></svg>
           <span style="font-family: '{{site.sysfont}}'">Demo (TBA)</span>
         </a>
         {% endif %}
-      </div>
-      <div class="button-container">
-        <a class="button" href="{{site.hf_train_data}}" target="_blank">
-          <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg> -->
-          <img src="https://huggingface.co/datasets/huggingface/brand-assets/resolve/main/hf-logo.png" alt="Submit" width="25em">        
-          <span style="font-family: '{{site.sysfont}}'">Data (SFT)</span>
-        </a>
-        <a class="button" href="{{site.hf_test_data}}" target="_blank">
-          <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg> -->
-          <img src="https://huggingface.co/datasets/huggingface/brand-assets/resolve/main/hf-logo.png" alt="Submit" width="25em">        
-          <span style="font-family: '{{site.sysfont}}'">Data (Test)</span>
-        </a>
-        <a class="button" href="{{site.hf_model_7b}}" target="_blank">
-          <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> -->
-          <img src="https://huggingface.co/datasets/huggingface/brand-assets/resolve/main/hf-logo.png" alt="Submit" width="25em">            
-          <span style="font-family: '{{site.sysfont}}'">Model (SFT)</span>
-        </a>
       </div>
     </div>
     <div class="wrapper">

@@ -27,7 +27,7 @@ hr {
   margin-bottom: 32px;
   background-color: #ccc;
   border: 0px;
-  height: 1px;
+  // height: 1px;
 }
 
 h4 {
@@ -49,20 +49,20 @@ h3 {
 }
 
 p {
-  font-size: 16px;
+  font-size: 17px;
   margin-bottom: 20px;
   color: #555;
-  font-weight: 350;
+  font-weight: 300;
   & > b {
     font-weight: 500;
   }
 }
 
 li {
-  font-size: 16px; /* Adjust font size */
+  font-size: 17px; /* Adjust font size */
   color: #555; /* Adjust text color */
   margin-bottom: 10px; /* Adjust margin between list items */
-  font-weight: 350;
+  font-weight: 300;
   & > b {
     font-weight: 500;
   }
@@ -70,11 +70,11 @@ li {
 }
 
 ul {
-  padding-left: 20px; /* Adjust padding for unordered lists */
+  padding-left: 10px; /* Adjust padding for unordered lists */
 }
 
 ol {
-  padding-left: 20px; /* Adjust padding for ordered lists */
+  padding-left: 10px; /* Adjust padding for ordered lists */
 }
 
 li + h1,
@@ -85,6 +85,12 @@ li + h5,
 li + h6 {
   margin-left: 0; /* Remove left margin */
   padding-left: 0; /* Remove left padding */
+}
+
+ul + h3,
+ol + h3 {
+  margin-left: 0 !important; /* Remove left margin */
+  padding-left: 0 !important; /* Remove left padding */
 }
 
 .video-wrapper {
@@ -111,7 +117,7 @@ iframe {
 
 .author-container {
   display: inline-block;
-  width: 12%;
+  width: 14%;
   margin: 0 2% 0 2%;
 }
 
@@ -317,6 +323,10 @@ strong {
     font-size: 14px;
   }
 
+  li {
+    font-size: 14px; /* Adjust font size */
+  }
+  
   .author-container p {
     font-size: 10px;
   }
