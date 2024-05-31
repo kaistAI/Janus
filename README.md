@@ -1,15 +1,16 @@
-# Inference and Train Code for Janus Models
+# Janus: Aligning to Thousands of Preferences via System Message Generalization
 
-This repository is the official implementation of **Aligning to Thousands of Preferences via System Message Generalization**. 
+This repository is the official implementation of [**Aligning to Thousands of Preferences via System Message Generalization**](https://lklab.kaist.ac.kr/Janus/). 
 
 ![janus_overview.png](assets/janus_overview.png)
 
 Janus is a 7B large language model (LLM) designed to align better with individual user preferences by using a diverse range of system messages. Unlike traditional models that assume aligning with the general public's preferences is optimal, Janus allows users to specify their values within the system message. To enhance generalization to diverse preferences, Janus was trained on the Multifaceted Collection, a dataset with 196k combinations of values from 65k user instructions. Janus outperforms several prominent models, including Mistral 7B Instruct v0.2, GPT-3.5 Turbo, and GPT-4 in multiple benchmarks, demonstrating that training with varied system messages can improve both personalized and general public alignment.
 
 - Paper: [arXiv](https://arxiv.org/abs/2405.17977)
-- Janus models: [Janus-7B](https://huggingface.co/kaist-ai/janus-7b), [Janus-DPO-7B](https://huggingface.co/kaist-ai/janus-dpo-7b), [Janus-ORPO-7B](https://huggingface.co/kaist-ai/janus-orpo-7b), [Janus-RM](https://huggingface.co/kaist-ai/janus-rm-7b)
-- Train dataset splits: [Multifaceted-Collection-SFT](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-SFT), [Multifaceted-Collection-DPO](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-DPO), [Multifaceted-Collection-ORPO](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-ORPO), [Multifaceted-Collection-RM](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-RM),
-- Test dataset: [Multifaceted-Bench](https://huggingface.co/datasets/kaist-ai/Multifaceted-Bench)
+- [Project page](https://lklab.kaist.ac.kr/Janus/)
+- Janus 7B models: [SFT (full)](https://huggingface.co/kaist-ai/janus-7b), [DPO](https://huggingface.co/kaist-ai/janus-dpo-7b), [ORPO](https://huggingface.co/kaist-ai/janus-orpo-7b), [RM](https://huggingface.co/kaist-ai/janus-rm-7b)
+- Train dataset (Multifaceted Collection) splits: [SFT (full)](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-SFT), [SFT (subset)](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-SFT-65k), [DPO](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-DPO), [ORPO](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-ORPO), [RM](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-RM)
+- Test dataset (Multifaceted Bench): [Multifaceted-Bench](https://huggingface.co/datasets/kaist-ai/Multifaceted-Bench)
 
 See [our HuggingFace collection](https://huggingface.co/collections/kaist-ai/system-message-preference-alignment-6657b608280c926a3d0ec09c) to easily browse all resources.
 
@@ -19,14 +20,13 @@ See [our HuggingFace collection](https://huggingface.co/collections/kaist-ai/sys
 
 ## Overview
 
-This repository mainly has three sections:
+This repository is for reproducing Janus models and results on our proposed Multifaceted Bench. There are three sections in this repo:
 
 - [Inference and evaluation](#inference-and-evaluation) of Janus models on Multifaceted Bench
 - [Training main Janus models](#train-main-models) using [axolotl](https://github.com/OpenAccess-AI-Collective/axolotl)
 - [Training Janus-RM-7B](#train-reward-model) using [OpenRLHF](https://github.com/OpenLLMAI/OpenRLHF)
 
 As we use different codebases for the three sections, we provide separate installation guidelines under the respective section. 
-
 
 ## Inference and evaluation
 ### Setup
@@ -51,7 +51,52 @@ pip install flash-attn --no-build-isolation
 export OPENAI_API_KEY=<YOUR_API_KEY>
 ```
 
-### Input format
+### Minimal example
+Here is a minimal code for Janus inference ([examples/inference_example.py](./examples/inference_example.py)).
+
+```python
+from transformers import AutoTokenizer, AutoModelForCausalLM
+import torch
+
+model_name = "kaist-ai/janus-7b"
+device = "cuda:0"
+
+# Load the model and tokenizer
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+dtype = "float16"
+if torch.cuda.is_bf16_supported():
+    dtype = "bfloat16"
+    
+model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=getattr(torch, dtype))
+model.eval()
+model.to(device)
+
+# Prepare inputs
+system = "As a financial news headline writer with a flair for the dramatic, you have taken on the role of crafting compelling headlines about the integration of AI into the financial sector. Your expertise allows you to weave industry-specific terminology seamlessly into each headline, striking a balance between capturing attention and providing meaningful insights into the transformative benefits of AI in finance. With each headline, you focus on elucidating the key advantages AI brings to financial operations, making complex information accessible and immediately impactful. While your headlines are designed to engage and inform an audience of finance and technology professionals, you navigate the fine line of excitement and accuracy with care, ensuring that the promises made are grounded in reality, thus avoiding any form of sensationalism. Your mission is to distill the essence of AI's impact on finance into a single, powerful line that speaks volumes to the informed reader."
+prompt = "Write a headline for an article about the benefits of using AI in the finance sector."
+
+def apply_template_mistral_instruct(system_message, content):
+    prompt = f"{system_message}\n{content}".strip()
+    return f"[INST] {prompt} [/INST] "
+
+input_str = apply_template_mistral_instruct(system, prompt)
+input_ids = tokenizer.encode(input_str, return_tensors="pt")
+print(input_str)
+
+model_inputs = input_ids.to(device)
+
+# Generate text
+output_ids = model.generate(model_inputs, max_new_tokens=1024)
+decoded = tokenizer.batch_decode(output_ids, skip_special_tokens=True)
+print(decoded[0][len(input_str):])
+# Revolutionary Trends: How AI Is Redefining Efficiency and Accuracy in the Financial Realm
+```
+
+We also provide minimal code for using Janus RM 7B to reward model outputs in [examples/inference_reward_example.py](examples/inference_reward_example.py).
+
+
+### Multifaceted Bench Input format
 
 - `source` (str): Source dataset of the instruction
 - `system` (str): System message detailing an objective to follow an individual's multifaceted preference, on four high-level dimensions of a desirable response (style, background knowledge, informativeness, and harmlessness)
@@ -118,108 +163,78 @@ export OPENAI_API_KEY=<YOUR_API_KEY>
 
 ### Scripts
 
-We provide simple single-file inference code in [examples/](./examples) and scripts for running inference on all instances on Multifaceted Bench via [Makefile](./Makefile).
-
-Here is a simple example inference code ([examples/inference_example.py](./examples/inference_example.py)).
-```python
-from transformers import AutoTokenizer, AutoModelForCausalLM
-import torch
-
-model_name = "kaist-ai/janus-7b"
-device = "cuda:0"
-
-# Load the model and tokenizer
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-
-dtype = "float16"
-if torch.cuda.is_bf16_supported():
-    dtype = "bfloat16"
-    
-model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=getattr(torch, dtype))
-model.eval()
-model.to(device)
-
-# Prepare inputs
-system = "As a financial news headline writer with a flair for the dramatic, you have taken on the role of crafting compelling headlines about the integration of AI into the financial sector. Your expertise allows you to weave industry-specific terminology seamlessly into each headline, striking a balance between capturing attention and providing meaningful insights into the transformative benefits of AI in finance. With each headline, you focus on elucidating the key advantages AI brings to financial operations, making complex information accessible and immediately impactful. While your headlines are designed to engage and inform an audience of finance and technology professionals, you navigate the fine line of excitement and accuracy with care, ensuring that the promises made are grounded in reality, thus avoiding any form of sensationalism. Your mission is to distill the essence of AI's impact on finance into a single, powerful line that speaks volumes to the informed reader."
-prompt = "Write a headline for an article about the benefits of using AI in the finance sector."
-
-def apply_template_mistral_instruct(system_message, content):
-    prompt = f"{system_message}\n{content}".strip()
-    return f"[INST] {prompt} [/INST] "
-
-input_str = apply_template_mistral_instruct(system, prompt)
-input_ids = tokenizer.encode(input_str, return_tensors="pt")
-print(input_str)
-
-model_inputs = input_ids.to(device)
-
-# Generate text
-output_ids = model.generate(model_inputs, max_new_tokens=1024)
-decoded = tokenizer.batch_decode(output_ids, skip_special_tokens=True)
-print(decoded[0][len(input_str):])
-# Revolutionary Trends: How AI Is Redefining Efficiency and Accuracy in the Financial Realm
-```
-
-To run inference on all instances of Multifaceted Bench: 
-```bash
-CUDA_VISIBLE_DEVICES=$(CUDA_VISIBLE_DEVICES) python run_inference.py \
---model_name kaist-ai/janus-7b \
---input_file kaist-ai/Multifaceted-Bench \
---output_dir responses/ \
---system_key system \
---user_key prompt \
---num_gpus 1
-```
-
-To apply Best-of-N sampling, refer to the following Best-of-4 sampling script template:
-```bash
-CUDA_VISIBLE_DEVICES=$(CUDA_VISIBLE_DEVICES) python run_inference.py \
---model_name kaist-ai/janus-7b \
---input_file kaist-ai/Multifaceted-Bench \
---output_dir responses/ \
---system_key system \
---user_key prompt \
---num_gpus 1 \
---suffix best-of-4 \
---N 4 \
---reward_model_name kaist-ai/janus-rm-7b \
---reward_model_device_num 1 \
---bf16
-```
-
-To run inference on OpenAI models:
-```bash
-python run_inference_openai.py \
---model_name gpt-3.5-turbo-0125 \
---input_file kaist-ai/Multifaceted-Bench \
---output_dir responses/ \
---system_key system \
---user_key prompt
-```
-
-> Note that you must specify `--system_key` and `--user_key` arguments in order to properly create the model input.
+We provide scripts for running inference and evaluation on all instances on Multifaceted Bench via [Makefile](./Makefile).
 
 
-We use a LLM-as-a-Judge approach to evaluate model responses on Multifaceted Bench. In the paper, we used `gpt-4-0125-preview` (GPT-4 Turbo) as the evaluator model and averaged scores of 3 runs.
+#### Inference
+As we use mixed precision (`bf16`) for inference, we use 1 x NVIDIA A6000 40GB GPU for each execution.
 
-```bash
-python run_eval_openai.py \
---model_name gpt-4-0125-preview \
---input_file kaist-ai/Multifaceted-Bench \
---response_file responses/janus-7b_responses.json \
---output_dir eval/ \
---user_key prompt \
---answer_key reference_answer \
---rubric_key rubric
-```
+Make sure to specify `--system_key` and `--user_key` arguments in order to properly create the model input.
 
-Again, we note that we provide the basic commands above in a [Makefile](./Makefile) to ease the execution process. For example, to run inference on Janus 7B, you can simply execute:
+To run inference on all instances of Multifaceted Bench, e.g., using `kaist-ai/janus-7b`: 
 ```bash
 make run_inference_janus
 ```
 
-<!-- Note: must not use system_key -->
+To apply Best-of-N sampling, e.g., using `kaist-ai/janus-rm-7b` to score best of 4 `kaist-ai/janus-7b` outputs:
+```bash
+make run_inference_janus_bo4
+```
 
+To run inference on OpenAI models, e.g., `gpt-3.5-turbo-0125`:
+```bash
+make run_inference_gpt35
+```
+
+All inference output files will have the name of `<OUTPUT_DIR>/<MODEL_NAME>_responses.json` by default. 
+To control the output file name, use the `--suffix` argument to add a suffix.
+
+Response output format:
+```json
+{
+    "0": {
+        "response": ...
+    },
+    "1": {
+        "response": ...
+    }, ...
+```
+
+
+#### Evaluation
+We use a LLM-as-a-Judge approach to evaluate model responses on Multifaceted Bench. In the paper, we used `gpt-4-0125-preview` (GPT-4 Turbo) as the evaluator model and averaged scores of 3 runs.
+
+To run evaluation on `kaist-ai/janus-7b` responses:
+
+```bash
+make run_eval_janus
+```
+
+We also provide an evaluation script that utilizes [OpenAI's Batch API](https://platform.openai.com/docs/guides/batch) feature. 
+
+All evaluation output files will have the name of `<OUTPUT_DIR>/responses_gpt4_eval/<MODEL_NAME>_evaluation.json` by default.
+
+Evaluation output format:
+```json
+{
+    "0": {
+        "id": ...,
+        "source": ...,
+        "system": ...,
+        "prompt": ...,
+        "reference_answer": ...,
+        "rubric": ...,
+        "response": ...,
+        "feedback": ..., //str
+        "score": [
+            // score for rubric 1,
+            // score for rubric 2,
+            // score for rubric 3,
+            // score for rubric 4
+        ]
+    },
+    "1": ...
+```
 
 ## Train main models
 
@@ -253,15 +268,9 @@ To train Janus 7B:
 accelerate launch -m axolotl.cli.train <PARENT_DIR>/janus-7b-192k.yaml
 ```
 
-To train Janus* 7B:
+To train Janus 7B (1 epoch) as a pretrained model for reward modeling:
 ```
-accelerate launch -m axolotl.cli.train <PARENT_DIR>/janus-7b-65k.yaml
-```
-
-To train Janus+DPO 7B:
-> Note: Configure the checkpoint path to Janus* 7B under `base_model` in the YAML file
-```
-accelerate launch -m axolotl.cli.train <PARENT_DIR>/janus-7b-dpo.yaml
+accelerate launch -m axolotl.cli.train <PARENT_DIR>/janus-7b-192k-epoch1.yaml
 ```
 
 To train Janus+ORPO 7B:
@@ -269,10 +278,20 @@ To train Janus+ORPO 7B:
 accelerate launch -m axolotl.cli.train <PARENT_DIR>/janus-7b-orpo.yaml
 ```
 
-To train Janus 7B (1 epoch) as a pretrained model for reward modeling:
+We train our DPO model from a Janus 7B checkpoint, Janus* 7B, that is only trained on one-third of the SFT dataset, i.e., include only 1 of the 3 system message variants for each instruction: [Multifaceted-Collection-SFT-65k](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-SFT-65k).
+
+To train Janus+DPO 7B,
+first train Janus* 7B:
 ```
-accelerate launch -m axolotl.cli.train <PARENT_DIR>/janus-7b-192k-epoch1.yaml
+accelerate launch -m axolotl.cli.train <PARENT_DIR>/janus-7b-65k.yaml
 ```
+
+then train using DPO:
+```
+accelerate launch -m axolotl.cli.train <PARENT_DIR>/janus-7b-dpo.yaml
+```
+> Note: Configure the checkpoint path to Janus* 7B under `base_model` in the YAML file
+
 
 ## Train reward model
 ### Setup
@@ -298,6 +317,8 @@ Replace `examples/train_rm.py` (under the OpenRLHF repo) with `train/openrlhf/tr
 
 ### Train using OpenRLHF
 We train the reward model in two stages, firstly using a subset of Multifaceted Collection and secondly using a mix of general helpfulness data. The scripts are located under [train/openrlhf/scripts](train/openrlhf/scripts).
+
+We use a Janus 7B checkpoint trained on all 196k SFT data, but only for 1 epoch, as the pre-trained model. See the `axolotl` training section above for instructions.
 
 1. Train on Multifaceted Collection (65k).
 ```bash

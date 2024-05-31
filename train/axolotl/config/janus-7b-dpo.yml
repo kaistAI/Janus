@@ -1,4 +1,4 @@
-base_model: # <Janus* 7b (66k) checkpoint>
+base_model: # <Janus* 7b (65k) checkpoint>
 model_type: MistralForCausalLM
 tokenizer_type: LlamaTokenizer
 
