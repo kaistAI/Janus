@@ -333,12 +333,10 @@ We use a Janus 7B checkpoint trained on all 196k SFT data, but only for 1 epoch,
 ## Citation
 If you find our work helpful for your work, please consider citing our paper.
 ```bibtex
-@misc{lee2024aligning,
-      title={Aligning to Thousands of Preferences via System Message Generalization}, 
-      author={Seongyun Lee and Sue Hyun Park and Seungone Kim and Minjoon Seo},
-      year={2024},
-      eprint={2405.17977},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL}
+@article{lee2024aligning,
+  title={Aligning to Thousands of Preferences via System Message Generalization},
+  author={Lee, Seongyun and Park, Sue Hyun and Kim, Seungone and Seo, Minjoon},
+  journal={arXiv preprint arXiv:2405.17977},
+  year={2024}
 }
 ```
