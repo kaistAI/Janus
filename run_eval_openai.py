@@ -292,7 +292,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("--user_key", type=str, required=True, default="prompt")
     parser.add_argument("--answer_key", type=str, required=True, default="reference_answer")
-    parser.add_argument("--rubric_key", type=str, default="rubric")
+    parser.add_argument("--rubric_key", type=str, default="rubrics")
     parser.add_argument("--system_key", type=str, default=None)
     parser.add_argument("--num_gpus", type=int, default=0)
     parser.add_argument("--force_rerun", action="store_true")

@@ -42,4 +42,4 @@ run_eval_janus:
 	--output_dir $(EVALUATION_DIR) \
 	--user_key prompt \
 	--answer_key reference_answer \
-	--rubric_key rubric
+	--rubric_key rubrics

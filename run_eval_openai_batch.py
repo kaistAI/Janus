@@ -54,7 +54,7 @@ def prepare_inputs(
     system_key=None,
     user_key="user_prompt",
     answer_key="reference_answer",
-    rubric_key="rubric",
+    rubric_key="rubrics",
 ):
     inputs = []
 
