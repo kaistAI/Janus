@@ -9,14 +9,15 @@ Janus is a 7B large language model (LLM) designed to align better with individua
 - Paper: [arXiv](https://arxiv.org/abs/2405.17977)
 - [Project page](https://lklab.kaist.ac.kr/Janus/)
 - Janus 7B models: [SFT (full)](https://huggingface.co/kaist-ai/janus-7b), [DPO](https://huggingface.co/kaist-ai/janus-dpo-7b), [ORPO](https://huggingface.co/kaist-ai/janus-orpo-7b), [RM](https://huggingface.co/kaist-ai/janus-rm-7b)
-- Train dataset (Multifaceted Collection) splits: [SFT (full)](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-SFT), [SFT (subset)](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-SFT-65k), [DPO](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-DPO), [ORPO](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-ORPO), [RM](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-RM)
+- Train dataset (Multifaceted Collection): [SFT (full)](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection), [SFT (subset)](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-small), [DPO](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-DPO), [ORPO](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-ORPO), [RM](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-RM)
 - Test dataset (Multifaceted Bench): [Multifaceted-Bench](https://huggingface.co/datasets/kaist-ai/Multifaceted-Bench)
 
 See [our HuggingFace collection](https://huggingface.co/collections/kaist-ai/system-message-preference-alignment-6657b608280c926a3d0ec09c) to easily browse all resources.
 
 ## News
 
-- [May 31, 2024] We released code, models, and datasets related to Janus.
+- [Jun 7, 2024] We changed our dataset license to allow commercial use and added the `preference_set` metadata (dimensions, subdimensions, and individual preference descriptions) that was used to synthesize the system message for each instruction.
+- [May 31, 2024] We released code, models, and datasets related to our system message generalization method.
 
 ## Overview
 
@@ -51,7 +52,7 @@ pip install flash-attn --no-build-isolation
 export OPENAI_API_KEY=<YOUR_API_KEY>
 ```
 
-### Minimal example
+### Minimal inference example
 Here is a minimal code for Janus inference ([examples/inference_example.py](./examples/inference_example.py)).
 
 ```python
@@ -256,7 +257,7 @@ pip3 install -e '.[flash-attn,deepspeed]'
 ```
 
 ### Input format
-Input format differs by the training method. Please refer to the dataset cards for more information: [Multifaceted-Collection-SFT](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-SFT), [Multifaceted-Collection-DPO](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-DPO), [Multifaceted-Collection-ORPO](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-ORPO)
+Input format differs by the training method. Please refer to the dataset cards for more information: [Multifaceted Collection](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection), [Multifaceted Collection small](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-small), [Multifaceted Collection DPO](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-DPO), [Multifaceted Collection ORPO](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-ORPO).
 
 ### Train using axolotl
 We store training configuration YAML files for SFT, DPO, and ORPO under [train/axolotl/config](train/axolotl/config).
@@ -278,7 +279,7 @@ To train Janus+ORPO 7B:
 accelerate launch -m axolotl.cli.train <PARENT_DIR>/janus-7b-orpo.yaml
 ```
 
-We train our DPO model from a Janus 7B checkpoint, Janus* 7B, that is only trained on one-third of the SFT dataset, i.e., include only 1 of the 3 system message variants for each instruction: [Multifaceted-Collection-SFT-65k](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-SFT-65k).
+We train our DPO model from a Janus 7B checkpoint, Janus* 7B, that is only trained on one-third of the SFT dataset, i.e., include only 1 of the 3 system message variants for each instruction: [Multifaceted Collection small](https://huggingface.co/datasets/kaist-ai/Multifaceted-Collection-small).
 
 To train Janus+DPO 7B,
 first train Janus* 7B:
