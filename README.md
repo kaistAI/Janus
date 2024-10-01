@@ -15,7 +15,7 @@ Janus is a 7B large language model (LLM) designed to align better with individua
 See [our HuggingFace collection](https://huggingface.co/collections/kaist-ai/system-message-preference-alignment-6657b608280c926a3d0ec09c) to easily browse all resources.
 
 ## News
-
+- [Sep 26, 2024] Our work has been accepted to NeurIPS 2024 Main track! See you in Vancouver 🇨🇦
 - [Jun 7, 2024] We changed our dataset license to allow commercial use and added the `preference_set` metadata (dimensions, subdimensions, and individual preference descriptions) that was used to synthesize the system message for each instruction.
 - [May 31, 2024] We released code, models, and datasets related to our system message generalization method.
 
