@@ -61,7 +61,7 @@ USER_PROMPT_TEMPLATE_RUBRIC_GENERATION_SINGLE_PREFERENCE = """
 
 # Open source LLM inference parameters
 SAMPLING_PARAMS = {
-    "max_tokens": 1024,
+    "max_tokens": 4096,
     "temperature": 1.0,
     "top_p": 0.9,
     "repetition_penalty": 1.03,

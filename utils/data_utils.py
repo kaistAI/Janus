@@ -46,7 +46,7 @@ def get_load_func(file):
             for line in reader:
                 yield line
                 
-    def load_hf_dataset(file_path, split="train"):
+    def load_hf_dataset(file_path, split):
         dataset = load_dataset(file_path, split=split)
         for d in dataset:
             yield d

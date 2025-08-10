@@ -16,7 +16,7 @@ from utils.prompts import SAMPLING_PARAMS
 
 random.seed(42)
 
-DEBUG = True
+DEBUG = False
 
 os.environ["CURL_CA_BUNDLE"] = ""
 
