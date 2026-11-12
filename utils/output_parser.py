@@ -31,6 +31,8 @@ def parse_judgment_abs(output):
         return None, None
 
     matches = re.search(abs_pattern, output, re.IGNORECASE | re.VERBOSE)
+    if matches is None:
+        matches = re.search(r"\bscore\s+of\s+(\d+)|\[(\d+)\]", output, re.IGNORECASE)
 
     if matches:
         # Extract the first group that matches (ignoring None)
@@ -83,5 +85,6 @@ if __name__ == "__main__":
                 print(f"  For input: '{output}', expected: {expected}, got: {result}")
         else:
             print("All tests passed!")
+        return not failed_tests
 
-    run_tests()
+    raise SystemExit(0 if run_tests() else 1)
